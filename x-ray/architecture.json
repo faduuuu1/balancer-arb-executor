@@ -1,0 +1,24 @@
+{
+  "title": "BalancerArbExecutor Architecture",
+  "nodes": [
+    {"id": "owner", "label": "Owner", "subtitle": "Sole operator", "type": "actor", "row": 0},
+    {"id": "executor", "label": "BalancerArbExecutor", "subtitle": "Borrow / route / repay", "type": "protocol", "row": 1},
+    {"id": "vault", "label": "Balancer V2 Vault", "subtitle": "Flash lender", "type": "external", "row": 2},
+    {"id": "routers", "label": "Allowlisted Routers", "subtitle": "DEX targets", "type": "external", "row": 2},
+    {"id": "tokens", "label": "ERC20 Tokens", "subtitle": "Loan / profit assets", "type": "external", "row": 3}
+  ],
+  "edges": [
+    {"from": "owner", "to": "executor", "label": "execute route"},
+    {"from": "owner", "to": "executor", "label": "manage allowlist"},
+    {"from": "executor", "to": "vault", "label": "flashLoan"},
+    {"from": "vault", "to": "executor", "label": "receiveFlashLoan"},
+    {"from": "executor", "to": "routers", "label": "swap steps"},
+    {"from": "executor", "to": "tokens", "label": "approve / repay"},
+    {"from": "routers", "to": "tokens", "label": "settle swap"},
+    {"from": "vault", "to": "tokens", "label": "lend principal"}
+  ],
+  "groups": [
+    {"label": "In Scope", "nodes": ["executor"]},
+    {"label": "External Dependencies", "nodes": ["vault", "routers"]}
+  ]
+}

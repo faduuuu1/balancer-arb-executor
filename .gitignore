@@ -1,0 +1,14 @@
+# Foundry build artifacts
+out/
+cache/
+broadcast/
+
+# Slither / Echidna / Medusa exports, corpora and logs
+crytic-export/
+fizz_data/crytic-export/
+fizz_data/corpus_medusa/
+fizz_data/logs_medusa/
+
+# OS
+.DS_Store
+Thumbs.db

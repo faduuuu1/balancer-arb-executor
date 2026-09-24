@@ -1,0 +1,23 @@
+{
+  "completed": true,
+  "partial": false,
+  "tool": "pashov solidity-auditor v3",
+  "at": "2026-08-31T12:05:00+05:00",
+  "agentsCompleted": 12,
+  "agentsTotal": 12,
+  "modelsUsed": { "opus": 2, "sonnet": 10 },
+  "modelNote": "The weekly rate limit is per model tier. Opus was exhausted; sonnet had headroom, so ten agents ran on sonnet. Worth re-running the gap-hunters on opus later — one sonnet agent inverted a Solidity semantics rule that the opus agent stated correctly.",
+  "findings": 3,
+  "findingsAboveThreshold": 2,
+  "leads": 8,
+  "rejected": 1,
+  "rejectedNote": "Codeless-VAULT silent-noop claim verified FALSE by direct test under solc 0.8.24: void external calls retain the extcodesize guard; only value-returning calls drop it.",
+  "highest": 90,
+  "pocSuites": ["test/PoCAgent3.t.sol", "test/PoCAgent4.t.sol"],
+  "pocsReproducing": 7,
+  "pocNote": "A PASSING PoC is a CONFIRMED vulnerability, not a green test. Excluded from the unit-test count in flashloan-status.js and surfaced as an inverted checklist row.",
+  "report": "AUDIT-FINDINGS.md",
+  "contractUnmodified": true,
+  "contractMd5": "f9a219c92d08503dc44d80d4d2c88155",
+  "note": "Fixes NOT applied — held at the user's instruction until the audit completed. Finding #1's fix changes execute()'s signature, so it should be done in one pass with #2 and #3 rather than patched around."
+}

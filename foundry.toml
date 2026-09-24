@@ -1,0 +1,31 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+test = "test"
+script = "script"
+solc_version = "0.8.24"
+optimizer = true
+optimizer_runs = 1_000_000
+via_ir = false
+
+# Arbitrage routes are long and the revert reasons matter when one fails
+# mid-flight, so keep full traces available.
+verbosity = 2
+
+[profile.default.fuzz]
+runs = 512
+
+[profile.default.invariant]
+runs = 256
+depth = 64
+fail_on_revert = false
+
+# `forge test --profile ci` — slower, wider.
+[profile.ci.fuzz]
+runs = 10_000
+
+[fmt]
+line_length = 100
+tab_width = 4
+bracket_spacing = false

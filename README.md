@@ -3,7 +3,12 @@
 Borrow from Balancer V2 at 0%, run a swap route, repay, keep the difference —
 or revert.
 
-**Status: written, not compiled, not audited, not deployed.**
+**Status:** implemented and tested — Foundry unit tests, fork tests against the
+live Balancer Vault, and a stateful invariant campaign under Echidna and Medusa.
+Findings are written up in [AUDIT-FINDINGS.md](AUDIT-FINDINGS.md), invariants in
+[PROPERTIES.md](PROPERTIES.md).
+
+**Self-reviewed only — not third-party audited, and not deployed.**
 
 ---
 
@@ -31,10 +36,21 @@ off-chain estimates were wrong every time they were checked.
 ## Layout
 
 ```
-src/BalancerArbExecutor.sol      the executor
-src/interfaces/                  IERC20, IBalancerVault
-test/BalancerArbExecutor.t.sol   security + economics tests
-script/Deploy.s.sol              deploys with NO targets allowlisted
+src/BalancerArbExecutor.sol        the executor
+src/interfaces/                    IERC20, IBalancerVault
+script/Deploy.s.sol                deploys with NO targets allowlisted
+
+test/BalancerArbExecutor.t.sol     security + economics tests
+test/ForkRealVault.t.sol           fork test against the live Balancer Vault
+test/ForkWrongChain.t.sol          wrong-chain control
+test/RegressionApprovalScope.t.sol pins the approval scope
+test/RegressionProfitScope.t.sol   pins the profit scope
+test/FizzViolationRepro.t.sol      a fuzzer violation, as a deterministic test
+test/fizz/                         stateful invariant suite (Echidna + Medusa)
+
+AUDIT-FINDINGS.md                  findings, leads, rejected, executable proof
+PROPERTIES.md                      invariants, including the ones dropped
+x-ray/                             architecture and entry-point analysis
 ```
 
 ## Security model
@@ -74,23 +90,27 @@ Needs [Foundry](https://getfoundry.sh).
 cd contracts && forge install foundry-rs/forge-std && forge build && forge test -vv
 ```
 
-## Audit before deploying
+## Review
 
-The pashov skills are installed at `~/.claude/skills/` and apply directly:
+The review is in [AUDIT-FINDINGS.md](AUDIT-FINDINGS.md), structured as scope,
+findings, leads, rejected, what held up, and executable proof. Invariants —
+including the ones deliberately dropped and why — are in
+[PROPERTIES.md](PROPERTIES.md).
+
+Each finding carries a proof-of-concept **and a negative control**: the case
+that must read zero. Without the control a PoC only shows that something
+happened, not that the stated mechanism caused it. `FizzViolationRepro.t.sol`
+takes a violation the fuzzer found and pins it as a deterministic Foundry test.
+
+Invariant campaigns:
 
 ```bash
-run an x-ray on the codebase
+echidna . --contract FuzzTester --config echidna.yaml
+medusa fuzz
 ```
 
-then the 12-agent pass, then invariant fuzzing:
-
-```bash
-run the solidity auditor with all the different agents possible on src/BalancerArbExecutor.sol
-```
-
-```bash
-run fizz on the codebase
-```
+This is a self-review. It is not a substitute for a third-party audit, and the
+contract should not hold funds until it has had one.
 
 ## Deploying
 
